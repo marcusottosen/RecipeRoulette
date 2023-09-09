@@ -72,7 +72,7 @@ fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {
                                 modifier = Modifier
                                     .padding(50.dp, 0.dp)
                                     .fillMaxWidth()
-                                    //.height(110.dp)
+                                    //.height(111.dp)
                                     ,//.clip(RoundedCornerShape(12.dp)),
                                 elevation = CardDefaults.cardElevation(
                                     defaultElevation = 10.dp
