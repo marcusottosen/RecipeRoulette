@@ -44,7 +44,7 @@ fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {
     }*/
 
 
-    val selectedRecipe by recipeViewModel.selectedRecipe.observeAsState()
+    //val selectedRecipe by recipeViewModel.selectedRecipe.observeAsState()
     val sidePadding = Modifier.padding(horizontal = 10.dp)
     LazyColumn {
         recipe?.let { recipe ->
