@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -93,7 +94,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                 modifier = Modifier
                     .padding(8.dp)
                     .size(300.dp, 100.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFfff2e6)),
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                 contentPadding = PaddingValues(5.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -107,7 +108,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                     )
                     Text(
                         text = "Breakfast",
-                        color = Color.Black,
+                        color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -126,7 +127,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                 modifier = Modifier
                     .padding(8.dp)
                     .size(300.dp, 100.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFfff2e6)),
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                 contentPadding = PaddingValues(5.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -140,7 +141,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                     )
                     Text(
                         text = "Dinner",
-                        color = Color.Black,
+                        color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -159,7 +160,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                 modifier = Modifier
                     .padding(8.dp)
                     .size(300.dp, 100.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFfff2e6)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 contentPadding = PaddingValues(5.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -173,7 +174,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                     )
                     Text(
                         text = "Dessert",
-                        color = Color.Black,
+                        color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -206,7 +207,9 @@ fun VegetarianSwitch(recipeViewModel: RecipeViewModel) {
 
         Switch(
             checked = recipeViewModel.vegetarianSwitch.value,
-            colors = SwitchDefaults.colors(checkedTrackColor = Color(0xFFe3473a)),
+            colors = SwitchDefaults.colors(
+                checkedTrackColor = MaterialTheme.colorScheme.primary
+            ),
             onCheckedChange = {
                 recipeViewModel.toggleVegetarianSwitch()
             },

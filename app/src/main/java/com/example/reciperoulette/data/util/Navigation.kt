@@ -17,7 +17,7 @@ import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 @ExperimentalFoundationApi
 @Composable
 fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewModel) {
-    val startingDestination = NavigationRoute.Recipe.route
+    val startingDestination = NavigationRoute.Homepage.route
 
 
     NavHost(
@@ -37,7 +37,7 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
         }
 
         composable(NavigationRoute.Recipe.route) {
-            RecipePage()//navController = navController, recipeViewModel)
+            RecipePage(navController = navController, recipeViewModel)//navController = navController, recipeViewModel
             //AnimatedView()
         }
 

@@ -1,13 +1,15 @@
 package com.example.reciperoulette.ui.view.pages
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,10 +20,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -30,6 +30,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,20 +39,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.reciperoulette.R
 import com.example.reciperoulette.data.model.dataClass.IngredientA
 import com.example.reciperoulette.data.model.dataClass.Instruction
 import com.example.reciperoulette.data.model.dataClass.RecipeA
 import com.example.reciperoulette.data.model.dataClass.Step
-import com.example.reciperoulette.ui.theme.PoppinsFontFamily
-import com.example.reciperoulette.ui.theme.RecipeRouletteTheme
+import com.example.reciperoulette.data.util.NavigationRoute
+import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 
 
 /*
@@ -66,20 +66,19 @@ fun TextStat(num: String, type: String){
         Text(
             text = num,
             style = MaterialTheme.typography.headlineSmall,
-            color = Color(0xFF6d7ac8)
+            color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = type,
             style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.tertiary
         )
     }
 }
 
-@Preview
 @Composable
-fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewModel
-    //val recipe by recipeViewModel.recipe.observeAsState()
+fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {//navController: NavController, recipeViewModel: RecipeViewModel
+    val recipe by recipeViewModel.recipe.observeAsState()
 
     /*LaunchedEffect(recipe) {
         // This block will execute whenever 'recipe' changes
@@ -87,7 +86,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
 
 
     // Sample data
-    val recipe = RecipeA(
+    /*val recipe = RecipeA(
         title = "Chile Underground's Texas Caviar",
         readyInMinutes = 180,
         servings = 8,
@@ -153,7 +152,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                 )
             )
         )
-    )
+    )*/
 
 
     val sidePadding = Modifier.padding(horizontal = 20.dp)
@@ -169,17 +168,23 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                 Column(
                     modifier = Modifier
                         .fillMaxSize(),
-                        //.background(Color(0xFFfff2e6)),
+                    //.background(Color(0xFFfff2e6)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
                         Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
+                            .fillMaxWidth(),
+                            //.padding(20.dp),
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        Box(modifier = Modifier
+                            .padding(20.dp)
+                            .clickable { navController.navigate(NavigationRoute.Homepage.route) }
+                        ) {
+                            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                        }
                     }
+
                     Image(
                         painter = rememberAsyncImagePainter(
                             ImageRequest.Builder(LocalContext.current).data(data = recipe.image)
@@ -196,6 +201,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                             .clip(RoundedCornerShape(12.dp)),
                         contentScale = ContentScale.Crop
                     )
+
 
 
                     /* Card(
@@ -222,7 +228,11 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                         modifier = sidePadding
                             .fillMaxSize()
                             .clip(RoundedCornerShape(12.dp))
-                            .border(2.dp, Color.LightGray, RoundedCornerShape(12.dp))
+                            .border(
+                                1.5.dp,
+                                MaterialTheme.colorScheme.tertiary,
+                                RoundedCornerShape(12.dp)
+                            )
                     ) {
                         Row(
                             modifier = sidePadding
@@ -232,21 +242,21 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                         ) {
                             TextStat(num = recipe.readyInMinutes.toString(), type = "minutes")
                             TextStat(num = recipe.servings.toString(), type = "servings")
-                            TextStat(num = recipe.readyInMinutes.toString(), type = "health score")
-                            TextStat(num = recipe.readyInMinutes.toString(), type = "about price")
+                            TextStat(num = recipe.calories.toString(), type = "calories")
+                            TextStat(num = recipe.protein.toString(), type = "protein")
                         }
                     }
                     Spacer(modifier = Modifier.height(70.dp))
-                  //  Card(
-                  //      modifier = Modifier
-                  //          .offset(y = 25.dp)
-                  //          .fillMaxWidth()
-                  //          .height(50.dp)
-                  //          .clip(RoundedCornerShape(40.dp, 40.dp, 0.dp, 1.dp)),
-                  //      colors = CardDefaults.cardColors(Color.Red)
+                    //  Card(
+                    //      modifier = Modifier
+                    //          .offset(y = 25.dp)
+                    //          .fillMaxWidth()
+                    //          .height(50.dp)
+                    //          .clip(RoundedCornerShape(40.dp, 40.dp, 0.dp, 1.dp)),
+                    //      colors = CardDefaults.cardColors(Color.Red)
 //
-                  //  ) {
-                  //  }
+                    //  ) {
+                    //  }
 
                 }
 
@@ -306,10 +316,14 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
 
             item {// Ingredients
                 Box(
-                    modifier = Modifier.fillMaxSize().background(Color(0xFF6d7ac8))
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primary)
                 ) {
                     Column(
-                        Modifier.fillMaxSize().padding(top = 20.dp)
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 20.dp)
                         //.background(Color(0xFFfff2e6)),
                     ) {
 
@@ -332,7 +346,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                                 text = "${recipe.extendedIngredients.size} items",
                                 //modifier = sidePadding,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.secondary
                                 //fontSize = 16.sp,
                                 //fontWeight = FontWeight.Bold
                             )
@@ -394,7 +408,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                             .offset(y = (-30).dp)
                             .height(50.dp)
                             .clip(RoundedCornerShape(40.dp, 40.dp, 0.dp, 0.dp)),
-                        colors = CardDefaults.cardColors(Color(0xFF6d7ac8)) //fff2e6
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary) //fff2e6
                     ) {
                         // Your card content here
                     }
@@ -430,9 +444,6 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
 
 
 
-
-
-
             item { // Instructions
                 Card(
                     modifier = Modifier
@@ -441,7 +452,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                     colors = CardDefaults.cardColors(Color.White)
 
                 ) {
-                    Spacer(modifier = Modifier.height(35.dp))
+                    Spacer(modifier = Modifier.height(1.dp))
                     val instructions = recipe.analyzedInstructions
                     /*
                 if (instructions.isNotEmpty()) {
@@ -480,7 +491,7 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                                 text = "${recipe.analyzedInstructions.sumOf { it.steps.size }} steps",
                                 //modifier = sidePadding,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.secondary
                                 //fontSize = 16.sp,
                                 //fontWeight = FontWeight.Bold
                             )
@@ -501,7 +512,6 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
                                     Text(
                                         text = " ${step.step}",
                                         style = MaterialTheme.typography.bodyMedium
-
                                     )
                                 }
                             }
@@ -511,16 +521,30 @@ fun RecipePage() {//navController: NavController, recipeViewModel: RecipeViewMod
             }
 
             item {
+                Spacer(modifier = Modifier.height(30.dp))
+
                 Button(
                     onClick = {
-                        //navController.navigate(NavigationRoute.Homepage.route)
+                        navController.navigate(NavigationRoute.Homepage.route)
                     },
-                    modifier = Modifier
+                    modifier = sidePadding
                         .fillMaxWidth()
-                        .padding(16.dp)
                 ) {
                     Text(text = "Back to Homepage")
                 }
+                Spacer(modifier = Modifier.height(15.dp))
+                val context = LocalContext.current
+
+                Text(
+                    text = "Recipe Credit: " + recipe.creditsText,
+                    modifier = sidePadding.clickable {
+                        val openURL = Intent(Intent.ACTION_VIEW)
+                        openURL.data = Uri.parse(recipe.sourceUrl)
+                        context.startActivity(openURL)
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    fontStyle = FontStyle.Italic
+                )
             }
         }
 

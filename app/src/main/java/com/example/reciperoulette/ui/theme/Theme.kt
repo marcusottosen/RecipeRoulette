@@ -47,10 +47,12 @@ val PoppinsFontFamily = FontFamily(
 )*/
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
+    primary = Color(0xFF6d7ac9),
+    secondary = Color(0xFFCAA470),
+    tertiary = Color(0xFFB8B9A0),
     background = Color(0xFFFFFFFF),
+    error = Color(0xFFCC4828),
+    surface = Color(0xFF4A8694)
 
 
     /* Other default colors to override

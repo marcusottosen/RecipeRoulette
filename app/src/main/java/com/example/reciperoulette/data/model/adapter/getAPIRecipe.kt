@@ -3,6 +3,7 @@ package com.example.reciperoulette.data.model.adapter
 import android.util.Log
 import com.example.reciperoulette.data.model.dataClass.RecipeA
 import com.example.reciperoulette.data.model.dataClass.RecipeResponse
+import com.example.reciperoulette.data.util.factExtractor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.client.plugins.ClientRequestException
@@ -44,6 +45,12 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                 val recipe = recipeResponse?.recipes?.firstOrNull()
 
 
+
+                val recipeUpdated = recipe?.let { factExtractor(recipe = it) }
+
+                return@withContext recipeUpdated
+
+
                 if (recipe != null) {
                     Log.d("HTTP", "Returning recipe: ${recipe.title}")
                     Log.d("HTTP", "Title: ${recipe.title}")
@@ -62,7 +69,7 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                             Log.d("HTTP", "Step ${step.number}: ${step.step}")
                         }
                     }
-                    return@withContext recipe
+                    return@withContext recipeUpdated
                 } else {
                     Log.d("HTTP", "Failed to parse recipe from response.")
                 }

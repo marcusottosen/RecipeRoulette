@@ -15,6 +15,10 @@ data class RecipeA(
     val sourceUrl: String,
     val image: String,
     val summary: String,
+    val calories: Int? = 0,
+    val protein: Int? = 0,
+    val fat: Int? = 0,
+    val creditsText: String,
     @Json(name = "extendedIngredients") val extendedIngredients: List<IngredientA>,
     val analyzedInstructions: List<Instruction>
 )
@@ -22,7 +26,7 @@ data class RecipeA(
 @JsonClass(generateAdapter = true)
 data class IngredientA(
     @Json(name = "nameClean") val nameClean: String,
-    val amount: Double,
+    val amount: String,
     val unit: String
 )
 

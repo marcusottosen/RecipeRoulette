@@ -74,13 +74,13 @@ fun AnimatedView(navController: NavController) {
     // Use LaunchedEffect with delays to control the text animation
     LaunchedEffect(key1 = composition) {
         delay(500) //500 for all
-        updateString = "Finding random recipe."
+        updateString = "Finding the best random recipe for you."
 
         delay(500)
-        updateString = "Finding random recipe.."
+        updateString = "Finding the best random recipe for you.."
 
         delay(500)
-        updateString = "Finding random recipe..."
+        updateString = "Finding the best random recipe for you..."
 
         delay(500)
         isFindingRecipe = false
