@@ -43,7 +43,6 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                 val recipeResponse = adapter.fromJson(responseBody)
                 val recipe = recipeResponse?.recipes?.firstOrNull()
 
-                return@withContext recipe
 
                 if (recipe != null) {
                     Log.d("HTTP", "Returning recipe: ${recipe.title}")
@@ -63,6 +62,7 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                             Log.d("HTTP", "Step ${step.number}: ${step.step}")
                         }
                     }
+                    return@withContext recipe
                 } else {
                     Log.d("HTTP", "Failed to parse recipe from response.")
                 }

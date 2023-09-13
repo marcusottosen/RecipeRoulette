@@ -28,7 +28,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val recipeViewModel = ViewModelProvider(this, SharedViewModelFactory(applicationContext)).get(RecipeViewModel::class.java)
+                    val recipeViewModel =
+                        ViewModelProvider(this, SharedViewModelFactory(applicationContext)).get(
+                            RecipeViewModel::class.java
+                        )
 
                     //val recipeViewModel: RecipeViewModel by viewModels()
                     val navController = rememberNavController()
