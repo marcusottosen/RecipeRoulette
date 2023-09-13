@@ -3,7 +3,7 @@ package com.example.reciperoulette.data.model.adapter
 import android.util.Log
 import com.example.reciperoulette.data.model.dataClass.RecipeA
 import com.example.reciperoulette.data.model.dataClass.RecipeResponse
-import com.example.reciperoulette.data.util.factExtractor
+import com.example.reciperoulette.data.util.responseInterpreter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.client.plugins.ClientRequestException
@@ -44,14 +44,10 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                 val recipeResponse = adapter.fromJson(responseBody)
                 val recipe = recipeResponse?.recipes?.firstOrNull()
 
+                return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
 
 
-                val recipeUpdated = recipe?.let { factExtractor(recipe = it) }
-
-                return@withContext recipeUpdated
-
-
-                if (recipe != null) {
+               /* if (recipe != null) {  // debugging
                     Log.d("HTTP", "Returning recipe: ${recipe.title}")
                     Log.d("HTTP", "Title: ${recipe.title}")
                     Log.d("HTTP", "Ready in minutes: ${recipe.readyInMinutes}")
@@ -61,7 +57,10 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                     Log.d("HTTP", "Summary: ${recipe.summary}")
 
                     recipe.extendedIngredients.forEach { ingredient ->
-                        Log.d("HTTP", "Ingredient: ${ingredient.nameClean} - ${ingredient.amount} ${ingredient.unit}")
+                        Log.d(
+                            "HTTP",
+                            "Ingredient: ${ingredient.nameClean} - ${ingredient.amount} ${ingredient.unit}"
+                        )
                     }
 
                     recipe.analyzedInstructions.forEach { instruction ->
@@ -69,17 +68,15 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                             Log.d("HTTP", "Step ${step.number}: ${step.step}")
                         }
                     }
-                    return@withContext recipeUpdated
+                    return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
                 } else {
                     Log.d("HTTP", "Failed to parse recipe from response.")
-                }
+                }*/
 
             } catch (e: ClientRequestException) {
                 Log.d("HTTP ERROR", e.toString())
                 return@withContext null
             }
-            Log.d("HTTP ERROR", "Returning null")
-            return@withContext null
         } else {
             println("Failed to fetch recipe. Response code: ${response.code}")
             return@withContext null

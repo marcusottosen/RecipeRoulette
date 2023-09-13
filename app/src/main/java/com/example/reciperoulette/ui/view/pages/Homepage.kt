@@ -54,7 +54,8 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
 
 
     // Define your logo image here (replace R.drawable.logo with your actual logo resource)
-    val logo = painterResource(id = R.drawable.logo_white_bg)
+    //val logo = painterResource(id = R.drawable.logo_white_bg)
+    val logo = painterResource(id = R.drawable.reciperoulettelogo3)
     val breakfastLogo = painterResource(id = R.drawable.breakfast)
     val dinnerLogo = painterResource(id = R.drawable.dinner)
     val dessertLogo = painterResource(id = R.drawable.dessert)
@@ -63,7 +64,8 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Logo
         Image(
@@ -71,7 +73,13 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
             contentDescription = "Logo",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .height(150.dp)
+        )
+
+        Text(
+            text = "Recipe Roulette",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 50.dp)
         )
 
         // Buttons

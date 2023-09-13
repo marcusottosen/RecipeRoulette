@@ -1,11 +1,10 @@
 package com.example.reciperoulette.data.util
 
-import androidx.compose.ui.res.integerArrayResource
 import com.example.reciperoulette.data.model.dataClass.Instruction
 import com.example.reciperoulette.data.model.dataClass.RecipeA
 import com.example.reciperoulette.data.model.dataClass.Step
 
-fun factExtractor(recipe: RecipeA): RecipeA {
+fun responseInterpreter(recipe: RecipeA): RecipeA {
     fun extractValue(pattern: String, input: String): Int? {
         val regex = pattern.toRegex()
         return regex.find(input)?.groups?.get(1)?.value?.toIntOrNull()
