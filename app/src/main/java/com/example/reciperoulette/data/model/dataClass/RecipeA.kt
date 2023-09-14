@@ -4,11 +4,12 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 data class RecipeResponse(
-    val recipes: List<RecipeA>
+    val results: List<RecipeA>
 )
 
 @JsonClass(generateAdapter = true)
 data class RecipeA(
+    val id: Int,
     val title: String,
     val readyInMinutes: Int,
     val servings: Int,
@@ -19,6 +20,7 @@ data class RecipeA(
     val protein: Int? = 0,
     val fat: Int? = 0,
     val creditsText: String,
+    val cuisines: List<String>,
     @Json(name = "extendedIngredients") val extendedIngredients: List<IngredientA>,
     val analyzedInstructions: List<Instruction>
 )

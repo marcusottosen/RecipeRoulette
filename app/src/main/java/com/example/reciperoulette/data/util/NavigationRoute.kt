@@ -6,7 +6,4 @@ sealed class NavigationRoute(var route: String) {
     object Recipe                   : NavigationRoute("recipe")
     object Loadingpage              : NavigationRoute("loading")
     object RecipeDetail             : NavigationRoute("recipeDetail")
-    object SignUp                   : NavigationRoute("signUp")
-    object Login                    : NavigationRoute("login")
-
 }

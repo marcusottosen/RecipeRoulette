@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.earzikimarket.ui.view.pages.login.LoginPage
-import com.example.earzikimarket.ui.view.pages.login.SignUpPage
 import com.example.reciperoulette.ui.view.pages.Homepage
 import com.example.reciperoulette.ui.view.pages.RecipeDetailsScreen
 import com.example.reciperoulette.ui.view.pages.RecipePage
@@ -24,13 +22,6 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
         navController,
         startDestination = startingDestination
     ) {
-        composable(NavigationRoute.SignUp.route) {
-            SignUpPage(navController)
-        }
-        composable(NavigationRoute.Login.route) {
-            LoginPage(navController = navController)
-        }
-
 
         composable(NavigationRoute.Homepage.route) {
             Homepage(navController, recipeViewModel)

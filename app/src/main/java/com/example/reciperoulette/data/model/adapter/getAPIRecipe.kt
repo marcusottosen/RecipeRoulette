@@ -9,6 +9,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.client.plugins.ClientRequestException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -18,15 +19,39 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
 
         val client = OkHttpClient()
         //Log.d("HTTP", "Requesting from API")
-        val url = "https://api.spoonacular.com/recipes/random?number=1&apiKey=8849a719c9ce4f18992d8aa50c4fd637"
-        val request = Request.Builder()
-            .url(url)
+        val urlB = "https://api.spoonacular.com/recipes/random?number=1&apiKey=8849a719c9ce4f18992d8aa50c4fd637"
+        val requestB = Request.Builder()
+            .url(urlB)
             .addHeader("limitLicense","true")
             .addHeader("tags", tags)
+            .addHeader("cuisines", "Thai")
             .get()
             .build()
 
-        //Log.d("HTTP", "Request finished")
+
+        val url = HttpUrl.Builder()
+            .scheme("https")
+            .host("api.spoonacular.com")
+            .addPathSegment("recipes")
+            .addPathSegment("complexSearch")
+            .addQueryParameter("number", "1")
+            .addQueryParameter("apiKey", "8849a719c9ce4f18992d8aa50c4fd637")
+            .addQueryParameter("sort", "random")
+            .addQueryParameter("cuisine", "italian")
+            .addQueryParameter("type", "dessert")
+            .addQueryParameter("diet", "vegetarian")
+            .addQueryParameter("fillIngredients", "true")
+            .addQueryParameter("addRecipeInformation", "true")
+            .addQueryParameter("limitLicense","true")
+            .addQueryParameter("instructionsRequired","true")
+            .build()
+
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+
+        Log.d("HTTP request", request.toString())
 
         val response = client.newCall(request).execute()
         val responseBody = response.body?.string()
@@ -42,12 +67,13 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
 
                 val adapter = moshi.adapter(RecipeResponse::class.java)
                 val recipeResponse = adapter.fromJson(responseBody)
-                val recipe = recipeResponse?.recipes?.firstOrNull()
+                val recipe = recipeResponse?.results?.firstOrNull()
 
-                return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
+                //return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
 
 
-               /* if (recipe != null) {  // debugging
+                if (recipe != null) {  // debugging
+                    Log.d("HTTP", "ID: ${recipe.id}")
                     Log.d("HTTP", "Returning recipe: ${recipe.title}")
                     Log.d("HTTP", "Title: ${recipe.title}")
                     Log.d("HTTP", "Ready in minutes: ${recipe.readyInMinutes}")
@@ -63,6 +89,10 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                         )
                     }
 
+                   recipe.cuisines.forEach { cuisine ->
+                       Log.d("HTTP", "cuisine: $cuisine")
+                   }
+
                     recipe.analyzedInstructions.forEach { instruction ->
                         instruction.steps.forEach { step ->
                             Log.d("HTTP", "Step ${step.number}: ${step.step}")
@@ -71,7 +101,9 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                     return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
                 } else {
                     Log.d("HTTP", "Failed to parse recipe from response.")
-                }*/
+                }
+                return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
+
 
             } catch (e: ClientRequestException) {
                 Log.d("HTTP ERROR", e.toString())
