@@ -8,7 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.reciperoulette.data.model.adapter.getAPIRecipe
-import com.example.reciperoulette.data.model.dataClass.RecipeA
+import com.example.reciperoulette.data.model.dataClass.Recipe
+import com.example.reciperoulette.data.model.dataClass.SearchCriteria
 import kotlinx.coroutines.launch
 
 class SharedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
@@ -32,10 +33,7 @@ class RecipeViewModel : ViewModel() {
     // Expose the selected meal type as a read-only state flow
     //val selectedMealType = _selectedMealType.asStateFlow()
 
-    init {
-        // Load recipe data when the ViewModel is initialized
-        //loadRecipeData()
-    }
+
 /*
     private fun loadRecipeData() {
         val repository = RecipeRepository()
@@ -84,23 +82,52 @@ class RecipeViewModel : ViewModel() {
 
     val vegetarianSwitch = mutableStateOf(false)
 
-    private val _recipe = MutableLiveData<RecipeA?>()
-    val recipe: LiveData<RecipeA?> get() = _recipe
+    private val _recipe = MutableLiveData<Recipe?>()
+    val recipe: LiveData<Recipe?> get() = _recipe   // Local version of the recipe from the API call
 
     private val _navigateToDetails = MutableLiveData<Boolean>()
     val navigateToDetails: LiveData<Boolean> get() = _navigateToDetails
 
+    val selectedCuisine = MutableLiveData<String>("")
+    val selectedDiet = MutableLiveData<String>("")
+    val selectedMealType = MutableLiveData<String>("")
+    val selectedMaxReadyTime = MutableLiveData<Int>(999)
+
+    private val _currentCriteria = MutableLiveData<SearchCriteria>()
+    val currentCriteria: LiveData<SearchCriteria> get() = _currentCriteria
+    init {
+        applyFilters()
+        // Load recipe data when the ViewModel is initialized
+        //loadRecipeData()
+    }
     fun fetchRecipe(mealType: String) {
-
         viewModelScope.launch {
+            val baseCriteria = _currentCriteria.value ?: return@launch
+            val additionalCriteria = SearchCriteria(type = mealType)
+            val finalCriteria = baseCriteria.mergeWith(additionalCriteria)
+            /*  val criteria = SearchCriteria(
+                  cuisine = listOf(selectedCuisine.value ?: ""),
+                  diet = listOf(selectedDiet.value ?: "vegetarian"),
+                  type = selectedMealType.value ?: "",
+                  maxReadyTime = selectedMaxReadyTime.value
+              )
             val tags = recipeStringMaker(mealType)
-            Log.d("string", tags)
+            Log.d("string", tags)*/
 
-            val fetchedRecipe = getAPIRecipe(tags)
+            val fetchedRecipe = getAPIRecipe(finalCriteria)
             _recipe.value = fetchedRecipe
             Log.d("RecipeViewModel", "Recipe fetched: ${fetchedRecipe?.title}")
             _navigateToDetails.value = true
         }
+    }
+
+    fun applyFilters() {
+        _currentCriteria.value = SearchCriteria(
+            cuisine = listOfNotNull(selectedCuisine.value),
+            diet = listOfNotNull(selectedDiet.value),
+            type = selectedMealType.value,
+            maxReadyTime = selectedMaxReadyTime.value
+        )
     }
 
     // Creates string of tags for API call

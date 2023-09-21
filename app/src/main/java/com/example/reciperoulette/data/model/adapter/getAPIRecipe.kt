@@ -1,8 +1,9 @@
 package com.example.reciperoulette.data.model.adapter
 
 import android.util.Log
-import com.example.reciperoulette.data.model.dataClass.RecipeA
+import com.example.reciperoulette.data.model.dataClass.Recipe
 import com.example.reciperoulette.data.model.dataClass.RecipeResponse
+import com.example.reciperoulette.data.model.dataClass.SearchCriteria
 import com.example.reciperoulette.data.util.responseInterpreter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -13,7 +14,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-suspend fun getAPIRecipe(tags: String): RecipeA? {
+suspend fun getAPIRecipe(criteria: SearchCriteria): Recipe? {
     return withContext(Dispatchers.IO) {
         //.url("https://api.spoonacular.com/recipes/recipes/random?tags=vegetarian%2Cdessert&number=1&limitLicense=true")
 
@@ -23,7 +24,7 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
         val requestB = Request.Builder()
             .url(urlB)
             .addHeader("limitLicense","true")
-            .addHeader("tags", tags)
+            //.addHeader("tags", tags)
             .addHeader("cuisines", "Thai")
             .get()
             .build()
@@ -37,13 +38,18 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
             .addQueryParameter("number", "1")
             .addQueryParameter("apiKey", "8849a719c9ce4f18992d8aa50c4fd637")
             .addQueryParameter("sort", "random")
-            .addQueryParameter("cuisine", "italian")
-            .addQueryParameter("type", "dessert")
-            .addQueryParameter("diet", "vegetarian")
+            //.addQueryParameter("cuisine", "italian")
+            //.addQueryParameter("type", "dessert")
+            //.addQueryParameter("diet", "vegetarian")
             .addQueryParameter("fillIngredients", "true")
             .addQueryParameter("addRecipeInformation", "true")
             .addQueryParameter("limitLicense","true")
             .addQueryParameter("instructionsRequired","true")
+            .apply {
+                criteria.toQueryMap().forEach{(key,value) ->
+                    addQueryParameter(key, value)
+                }
+            }
             .build()
 
         val request = Request.Builder()
@@ -98,11 +104,11 @@ suspend fun getAPIRecipe(tags: String): RecipeA? {
                             Log.d("HTTP", "Step ${step.number}: ${step.step}")
                         }
                     }
-                    return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
+                    return@withContext recipe?.let<Recipe, Recipe> { responseInterpreter(recipe = it) }
                 } else {
                     Log.d("HTTP", "Failed to parse recipe from response.")
                 }
-                return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
+                return@withContext recipe?.let<Recipe, Recipe> { responseInterpreter(recipe = it) }
 
 
             } catch (e: ClientRequestException) {

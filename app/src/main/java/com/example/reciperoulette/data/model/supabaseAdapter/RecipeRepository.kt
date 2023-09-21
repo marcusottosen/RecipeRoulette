@@ -1,11 +1,9 @@
 package com.example.reciperoulette.data.model.supabaseAdapter
 
 import android.content.Context
-import com.example.reciperoulette.data.model.dataClass.Recipe
-import com.example.reciperoulette.data.model.dataClass.RecipeList
 import com.example.reciperoulette.data.util.readJsonFromAssets
 import com.google.gson.Gson
-
+/*
 class RecipeRepository {
     fun loadRecipeData(context: Context, fileName: String): List<Recipe> {
         try {
@@ -18,4 +16,4 @@ class RecipeRepository {
             return emptyList()
         }
     }
-}
+}*/

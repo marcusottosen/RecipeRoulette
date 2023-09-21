@@ -14,9 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -188,6 +192,9 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                     )
                 }
             }
+            IconButton(onClick = { navController.navigate(NavigationRoute.FilterPage.route) }) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = "Close Icon")
+            }
 
             Spacer(modifier = Modifier.height(100.dp))
             VegetarianSwitch(recipeViewModel)
@@ -235,6 +242,8 @@ fun VegetarianSwitch(recipeViewModel: RecipeViewModel) {
         )
     }
 }
+
+
 
 // Observe the LiveData
 //val recipes by recipeViewModel.recipes.observeAsState(initial = emptyList())

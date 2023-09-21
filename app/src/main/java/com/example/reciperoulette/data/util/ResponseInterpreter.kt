@@ -1,10 +1,10 @@
 package com.example.reciperoulette.data.util
 
 import com.example.reciperoulette.data.model.dataClass.Instruction
-import com.example.reciperoulette.data.model.dataClass.RecipeA
+import com.example.reciperoulette.data.model.dataClass.Recipe
 import com.example.reciperoulette.data.model.dataClass.Step
 
-fun responseInterpreter(recipe: RecipeA): RecipeA {
+fun responseInterpreter(recipe: Recipe): Recipe {
     fun extractValue(pattern: String, input: String): Int? {
         val regex = pattern.toRegex()
         return regex.find(input)?.groups?.get(1)?.value?.toIntOrNull()

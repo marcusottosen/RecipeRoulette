@@ -39,23 +39,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.reciperoulette.R
-import com.example.reciperoulette.data.model.dataClass.IngredientA
-import com.example.reciperoulette.data.model.dataClass.Instruction
-import com.example.reciperoulette.data.model.dataClass.RecipeA
-import com.example.reciperoulette.data.model.dataClass.Step
 import com.example.reciperoulette.data.util.NavigationRoute
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 
 
-/*
-TODO: Get calories, protein and fat from summary
- */
 @Composable
 fun TextStat(num: String, type: String){
     Column(
@@ -174,7 +166,7 @@ fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {
                     Row(
                         Modifier
                             .fillMaxWidth(),
-                            //.padding(20.dp),
+                        //.padding(20.dp),
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Box(modifier = Modifier

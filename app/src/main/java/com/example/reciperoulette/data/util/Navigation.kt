@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.reciperoulette.ui.view.pages.FilterPage
 import com.example.reciperoulette.ui.view.pages.Homepage
-import com.example.reciperoulette.ui.view.pages.RecipeDetailsScreen
 import com.example.reciperoulette.ui.view.pages.RecipePage
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 
@@ -28,16 +28,15 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
         }
 
         composable(NavigationRoute.Recipe.route) {
-            RecipePage(navController = navController, recipeViewModel)//navController = navController, recipeViewModel
-            //AnimatedView()
+            RecipePage(navController, recipeViewModel)//navController = navController, recipeViewModel
         }
 
         composable(NavigationRoute.Loadingpage.route){
             AnimatedView(navController)
         }
 
-        composable(NavigationRoute.RecipeDetail.route){
-            RecipeDetailsScreen(navController = navController, recipeViewModel)
+        composable(NavigationRoute.FilterPage.route){
+            FilterPage(navController, recipeViewModel)
         }
 
 
