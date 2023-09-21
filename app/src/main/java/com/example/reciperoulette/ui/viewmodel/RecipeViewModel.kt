@@ -1,7 +1,9 @@
 package com.example.reciperoulette.ui.viewmodel
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,74 +13,24 @@ import com.example.reciperoulette.data.model.adapter.getAPIRecipe
 import com.example.reciperoulette.data.model.dataClass.Recipe
 import com.example.reciperoulette.data.model.dataClass.SearchCriteria
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
+import java.util.Locale
 
 class SharedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RecipeViewModel::class.java)) {
-            return RecipeViewModel() as T
+            return RecipeViewModel(context) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
-class RecipeViewModel : ViewModel() {
-    // LiveData to hold the recipe data
-    //private val _recipes = MutableLiveData<List<Recipe>>()
-    //val recipes: LiveData<List<Recipe>> = _recipes
+class RecipeViewModel(context: Context) : ViewModel() {
+    private val contextRef: WeakReference<Context> = WeakReference(context)
 
-    //private val _selectedRecipe = MutableLiveData<Recipe?>()
-    //val selectedRecipe: LiveData<Recipe?> = _selectedRecipe
-
-    //private val _selectedMealType = MutableStateFlow<String?>(null)
-    // Expose the selected meal type as a read-only state flow
-    //val selectedMealType = _selectedMealType.asStateFlow()
-
-
-/*
-    private fun loadRecipeData() {
-        val repository = RecipeRepository()
-        _recipes.value = repository.loadRecipeData(context, "data.json")
+    private fun getContext(): Context? {
+        return contextRef.get()
     }
-
-    /*fun loadRecipeData(context: Context) {
-        val fileName = "data.json"
-        try {
-            Log.d("json", "Loading data..")
-            // Replace with your JSON file's name and path
-            val jsonString = readJsonFromAssets(context, fileName)
-
-            val gson = Gson()
-            val recipeList = gson.fromJson(jsonString, RecipeList::class.java)
-            _recipes.value = recipeList.recipes
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }*/
-
-    fun selectRandomRecipe() {
-        val recipesList = _recipes.value ?: emptyList()
-        if (recipesList.isNotEmpty()) {
-            _selectedRecipe.value = recipesList.random()
-        }
-    }
-
-    fun getRecipe(): Recipe? {
-        return _selectedRecipe.value
-    }
-
-    fun setRecipe(recipe: Recipe?) {
-        _selectedRecipe.value = recipe
-    }
-
-    // Function to set the selected meal type
-    fun setSelectedMealType(mealType: String) {
-        _selectedMealType.value = mealType
-    }
-
-*/
-
-    // ##################################
-
 
     val vegetarianSwitch = mutableStateOf(false)
 
@@ -97,13 +49,17 @@ class RecipeViewModel : ViewModel() {
     val currentCriteria: LiveData<SearchCriteria> get() = _currentCriteria
     init {
         applyFilters()
-        // Load recipe data when the ViewModel is initialized
         //loadRecipeData()
     }
     fun fetchRecipe(mealType: String) {
         viewModelScope.launch {
+            // Get the base criteria from LiveData or return if it's null
             val baseCriteria = _currentCriteria.value ?: return@launch
-            val additionalCriteria = SearchCriteria(type = mealType)
+
+            // Add the mealtype to the criteria
+            val additionalCriteria = SearchCriteria(type = mealType.lowercase())
+
+            // Merge the base criteria with the additional criteria
             val finalCriteria = baseCriteria.mergeWith(additionalCriteria)
             /*  val criteria = SearchCriteria(
                   cuisine = listOf(selectedCuisine.value ?: ""),
@@ -115,13 +71,16 @@ class RecipeViewModel : ViewModel() {
             Log.d("string", tags)*/
 
             val fetchedRecipe = getAPIRecipe(finalCriteria)
-            _recipe.value = fetchedRecipe
+            _recipe.value = fetchedRecipe   // Set the recipe to the fetched recipe
             Log.d("RecipeViewModel", "Recipe fetched: ${fetchedRecipe?.title}")
-            _navigateToDetails.value = true
+            if (fetchedRecipe != null)
+                _navigateToDetails.value = true
+            else
+                Toast.makeText(getContext(), "No recipe found", Toast.LENGTH_SHORT).show()
         }
     }
 
-    fun applyFilters() {
+    fun applyFilters() {    // Creates a new SearchCriteria object from the selected filters
         _currentCriteria.value = SearchCriteria(
             cuisine = listOfNotNull(selectedCuisine.value),
             diet = listOfNotNull(selectedDiet.value),

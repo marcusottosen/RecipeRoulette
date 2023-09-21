@@ -39,8 +39,9 @@ suspend fun getAPIRecipe(criteria: SearchCriteria): Recipe? {
             .addQueryParameter("apiKey", "8849a719c9ce4f18992d8aa50c4fd637")
             .addQueryParameter("sort", "random")
             //.addQueryParameter("cuisine", "italian")
-            //.addQueryParameter("type", "dessert")
-            //.addQueryParameter("diet", "vegetarian")
+            .addQueryParameter("type", criteria.type)
+
+                //.addQueryParameter("diet", "vegetarian")
             .addQueryParameter("fillIngredients", "true")
             .addQueryParameter("addRecipeInformation", "true")
             .addQueryParameter("limitLicense","true")
@@ -77,6 +78,7 @@ suspend fun getAPIRecipe(criteria: SearchCriteria): Recipe? {
 
                 //return@withContext recipe?.let<RecipeA, RecipeA> { responseInterpreter(recipe = it) }
 
+                return@withContext recipe?.let<Recipe, Recipe> { responseInterpreter(recipe = it) }
 
                 if (recipe != null) {  // debugging
                     Log.d("HTTP", "ID: ${recipe.id}")
@@ -104,7 +106,6 @@ suspend fun getAPIRecipe(criteria: SearchCriteria): Recipe? {
                             Log.d("HTTP", "Step ${step.number}: ${step.step}")
                         }
                     }
-                    return@withContext recipe?.let<Recipe, Recipe> { responseInterpreter(recipe = it) }
                 } else {
                     Log.d("HTTP", "Failed to parse recipe from response.")
                 }

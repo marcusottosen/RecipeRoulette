@@ -1,7 +1,10 @@
 package com.example.reciperoulette.ui.view.pages
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,11 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +34,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,14 +43,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.reciperoulette.R
-import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 import com.example.reciperoulette.data.util.NavigationRoute
+import com.example.reciperoulette.ui.view.reuseables.MealPager
+import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 
 
 @Composable
+fun CustomCard(
+    shadowColor: Color = Color(0xFF0D1F83),
+    backgroundColor: Color = Color(0xFFa3ade6),
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .height(500.dp)
+            .width(300.dp)
+            .padding(10.dp)
+            .shadow(
+                elevation = 20.dp,
+                shape = RoundedCornerShape(30.dp),
+                spotColor = shadowColor
+            )
+            .clip(RoundedCornerShape(30.dp))
+            .background(backgroundColor)
+    ) {
+        content()
+    }
+}
+data class MealData(
+    val title: String,
+    val imageResId: Int,
+    val shadowColor: Color,
+    val backgroundColor: Color
+)
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
 
-    val randomRecipeButtonClicked = remember { mutableStateOf(false) }
+    //val randomRecipeButtonClicked = remember { mutableStateOf(false) }
 
     // ###
     val navigateToDetails by recipeViewModel.navigateToDetails.observeAsState(initial = false)
@@ -60,31 +95,41 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
     // Define your logo image here (replace R.drawable.logo with your actual logo resource)
     //val logo = painterResource(id = R.drawable.logo_white_bg)
     val logo = painterResource(id = R.drawable.reciperoulettelogo3)
-    val breakfastLogo = painterResource(id = R.drawable.breakfast)
-    val dinnerLogo = painterResource(id = R.drawable.dinner)
-    val dessertLogo = painterResource(id = R.drawable.dessert)
+    val breakfastLogo = painterResource(id = R.drawable.breakfastillu)
+    val dinnerLogo = painterResource(id = R.drawable.dinnerillu)
+    val dessertLogo = painterResource(id = R.drawable.dessertillu)
+
+    val mealDataList = listOf(
+        MealData("Breakfast", R.drawable.breakfastillu, Color(0xFF0D1F83), Color(0xFFa3ade6)),
+        MealData("Dinner", R.drawable.dinnerillu, Color(0xFFB1700C), Color(0xFFFEDAA3)),
+        MealData("Soup", R.drawable.dessertillu, Color(0xFFC5190C), Color(0xFFE2A19C)),
+    )
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
+        //.padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Logo
-        Image(
-            painter = logo,
-            contentDescription = "Logo",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        )
 
+        // Logo
+        //Image(
+        //    painter = logo,
+        //    contentDescription = "Logo",
+        //    modifier = Modifier
+        //        .fillMaxWidth()
+        //        .height(150.dp)
+        //)
         Text(
             text = "Recipe Roulette",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 50.dp)
+            modifier = Modifier.padding(vertical = 20.dp)
         )
+
+        Box (Modifier.height(600.dp).fillMaxWidth()) {
+            MealPager(mealDataList, recipeViewModel)
+        }
 
         // Buttons
         Column(
@@ -94,7 +139,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
+            /*Button(
                 onClick = {
                     recipeViewModel.fetchRecipe("breakfast")
                     /*
@@ -191,7 +236,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
                         fontWeight = FontWeight.Bold
                     )
                 }
-            }
+            }*/
             IconButton(onClick = { navController.navigate(NavigationRoute.FilterPage.route) }) {
                 Icon(imageVector = Icons.Default.Settings, contentDescription = "Close Icon")
             }
