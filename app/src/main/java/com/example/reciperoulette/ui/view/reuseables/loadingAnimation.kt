@@ -40,7 +40,7 @@ fun AnimatedView(navController: NavController) {
     var isFindingRecipe by remember { mutableStateOf(true) }
 
     var updateString by remember {
-        mutableStateOf("Finding random recipe")
+        mutableStateOf("Finding the best random recipe for you")
     }
 
     Box(

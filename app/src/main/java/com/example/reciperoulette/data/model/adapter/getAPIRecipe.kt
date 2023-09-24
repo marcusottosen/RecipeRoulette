@@ -29,7 +29,7 @@ suspend fun getAPIRecipe(criteria: SearchCriteria): Recipe? {
             .get()
             .build()
 
-
+        Log.d("HTTP Type", criteria.type.toString())
         val url = HttpUrl.Builder()
             .scheme("https")
             .host("api.spoonacular.com")

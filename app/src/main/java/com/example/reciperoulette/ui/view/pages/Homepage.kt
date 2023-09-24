@@ -100,9 +100,12 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
     val dessertLogo = painterResource(id = R.drawable.dessertillu)
 
     val mealDataList = listOf(
+        MealData("Drink", R.drawable.drink, Color(0xFF19830D), Color(0xFFA7DBA3)),
+        MealData("Snack", R.drawable.snack, Color(0xFF6D0D83), Color(0xFFEBBCE7)),
         MealData("Breakfast", R.drawable.breakfastillu, Color(0xFF0D1F83), Color(0xFFa3ade6)),
-        MealData("Dinner", R.drawable.dinnerillu, Color(0xFFB1700C), Color(0xFFFEDAA3)),
-        MealData("Soup", R.drawable.dessertillu, Color(0xFFC5190C), Color(0xFFE2A19C)),
+        MealData("Main Course", R.drawable.dinnerillu, Color(0xFFB1700C), Color(0xFFFEDAA3)),
+        MealData("Dessert", R.drawable.dessertillu, Color(0xFFC5190C), Color(0xFFE2A19C)),
+        MealData("Soup", R.drawable.soup, Color(0xFF0D9186), Color(0xFF9CE2DA)),
     )
 
     Column(
@@ -242,8 +245,6 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
             }
 
             Spacer(modifier = Modifier.height(100.dp))
-            VegetarianSwitch(recipeViewModel)
-            Spacer(modifier = Modifier.height(100.dp))
 
         }
     }
@@ -258,7 +259,7 @@ fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
         }
     }*/
 }
-
+/*
 @Composable
 fun VegetarianSwitch(recipeViewModel: RecipeViewModel) {
 
@@ -286,7 +287,7 @@ fun VegetarianSwitch(recipeViewModel: RecipeViewModel) {
             }
         )
     }
-}
+}*/
 
 
 

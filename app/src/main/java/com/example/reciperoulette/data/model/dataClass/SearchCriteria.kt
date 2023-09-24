@@ -19,11 +19,15 @@ data class SearchCriteria(
     fun toQueryMap(): Map<String, String> {
         val map = mutableMapOf<String, String>()
 
-        cuisine?.let { map["cuisine"] = it.joinToString(",") }
-        diet?.let { map["diet"] = it.joinToString(",") }
-        intolerances?.let { map["intolerances"] = it.joinToString(",") }
-        type?.let { map["type"] = it }
-        maxReadyTime?.let { map["maxReadyTime"] = it.toString() }
+        map["cuisine"] = cuisine?.joinToString(",") ?: ""
+        map["diet"] = diet?.joinToString(",") ?: ""
+        map["intolerances"] = intolerances?.joinToString(",") ?: ""
+        map["maxReadyTime"] = maxReadyTime?.toString() ?: ""
+
+        // Remove entries with empty values
+        map.entries.removeIf { it.value.isEmpty() }
+
         return map
     }
+
 }

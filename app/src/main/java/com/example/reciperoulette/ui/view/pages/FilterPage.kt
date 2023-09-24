@@ -44,7 +44,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.example.reciperoulette.data.util.NavigationRoute
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
-
+/*
 @Composable
 fun FilterPage(navController: NavController, viewModel: RecipeViewModel){
     LaunchedEffect(Unit) {
@@ -94,7 +94,7 @@ fun FilterPage(navController: NavController, viewModel: RecipeViewModel){
         // Add similar components for other filters
 
         Button(onClick = {
-            viewModel.applyFilters()
+            //viewModel.applyFilters()
             navController.navigate(NavigationRoute.Homepage.route)
         }) {
             Text("Apply Filters")
@@ -355,4 +355,4 @@ fun DietRadioButton(selectedDiet: MutableLiveData<String>, onDietSelected: (Stri
             }
         }
     }
-}
+}*/

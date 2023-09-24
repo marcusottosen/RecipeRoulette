@@ -56,7 +56,7 @@ fun MealPager(mealDataList: List<MealData>, viewModel: RecipeViewModel) {
             .fillMaxSize()
             //.background(Color(0xFFF1B3B3)),
     ) {
-        val pagerState = rememberPagerState(pageCount = { mealDataList.size }, initialPage = 1)
+        val pagerState = rememberPagerState(pageCount = { mealDataList.size }, initialPage = 3)
 
         HorizontalPager(
             contentPadding = PaddingValues(horizontal = 40.dp),
