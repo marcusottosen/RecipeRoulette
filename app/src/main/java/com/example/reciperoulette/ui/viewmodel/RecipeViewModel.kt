@@ -67,14 +67,9 @@ class RecipeViewModel(context: Context) : ViewModel() {
     fun fetchRecipe(mealType: String) {
         val context = contextRef.get()
         val resources = context!!.resources
-
+        var isRetryAttempted = false
 
         val apiKey = getProperty("key", context).toString()
-        Log.d("KEY in VM", "myKey: $apiKey")
-
-
-
-
 
 
         viewModelScope.launch {
@@ -91,14 +86,20 @@ class RecipeViewModel(context: Context) : ViewModel() {
                 val fetchedRecipe = getAPIRecipe(finalCriteria, apiKey = apiKey!!)
                 _recipe.value = fetchedRecipe   // Set the recipe to the fetched recipe
                 Log.d("RecipeViewModel", "Recipe fetched: ${fetchedRecipe?.title}")
-                if (fetchedRecipe != null)
+                if (fetchedRecipe != null) {
+                    isRetryAttempted = false
                     _navigateToDetails.value = true
-                else
-                    Toast.makeText(getContext(), "No recipe found", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(getContext(), "No recipe found. Try changing your filters", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
-                // Handle exceptions here
-                Log.e("RecipeViewModel", "Error fetching recipe: ${e.message}")
-                Toast.makeText(getContext(), "Error fetching recipe", Toast.LENGTH_SHORT).show()
+                if (!isRetryAttempted) {
+                    isRetryAttempted = true
+                    fetchRecipe(mealType)
+                } else {
+                    Log.e("RecipeViewModel", "Error fetching recipe: ${e.message}")
+                    Toast.makeText(getContext(), "Error fetching recipe", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
