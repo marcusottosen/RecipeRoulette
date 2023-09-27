@@ -1,9 +1,9 @@
 package com.example.reciperoulette.ui.viewmodel
+
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,11 +12,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.reciperoulette.data.model.adapter.getAPIRecipe
 import com.example.reciperoulette.data.model.dataClass.Recipe
 import com.example.reciperoulette.data.model.dataClass.SearchCriteria
-import com.example.reciperoulette.data.util.FilterData
 import com.example.reciperoulette.data.util.FilterItem
+import com.example.reciperoulette.data.util.getProperty
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.lang.ref.WeakReference
-import java.util.Locale
+import java.util.Properties
+
 
 class SharedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -27,12 +29,19 @@ class SharedViewModelFactory(private val context: Context) : ViewModelProvider.F
     }
 }
 
-class RecipeViewModel(context: Context) : ViewModel() {
-    private val contextRef: WeakReference<Context> = WeakReference(context)
 
-    private fun getContext(): Context? {
+
+class RecipeViewModel(context: Context) : ViewModel() {
+    private val contextRef = WeakReference(context)
+    fun getContext(): Context? {
         return contextRef.get()
     }
+
+    //private val contextRef: WeakReference<Context> = WeakReference(context)
+
+   // private fun getContext(): Context? {
+   //     return contextRef.get()
+   // }
 
     val vegetarianSwitch = mutableStateOf(false)
 
@@ -53,7 +62,21 @@ class RecipeViewModel(context: Context) : ViewModel() {
             maxReadyTime = null
         )
     }
+
+
     fun fetchRecipe(mealType: String) {
+        val context = contextRef.get()
+        val resources = context!!.resources
+
+
+        val apiKey = getProperty("key", context).toString()
+        Log.d("KEY in VM", "myKey: $apiKey")
+
+
+
+
+
+
         viewModelScope.launch {
             try {
                 // Get the base criteria from LiveData or return if it's null
@@ -65,7 +88,7 @@ class RecipeViewModel(context: Context) : ViewModel() {
                 // Merge the base criteria with the additional criteria
                 val finalCriteria = baseCriteria.mergeWith(additionalCriteria)
 
-                val fetchedRecipe = getAPIRecipe(finalCriteria)
+                val fetchedRecipe = getAPIRecipe(finalCriteria, apiKey = apiKey!!)
                 _recipe.value = fetchedRecipe   // Set the recipe to the fetched recipe
                 Log.d("RecipeViewModel", "Recipe fetched: ${fetchedRecipe?.title}")
                 if (fetchedRecipe != null)
@@ -78,6 +101,7 @@ class RecipeViewModel(context: Context) : ViewModel() {
                 Toast.makeText(getContext(), "Error fetching recipe", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
 

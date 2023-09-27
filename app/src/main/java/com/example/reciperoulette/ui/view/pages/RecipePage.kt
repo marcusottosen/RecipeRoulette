@@ -32,6 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -146,6 +149,7 @@ fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {
         )
     )*/
 
+    var isImageExpanded by remember { mutableStateOf(false) }
 
     val sidePadding = Modifier.padding(horizontal = 20.dp)
 
@@ -182,7 +186,7 @@ fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {
                             ImageRequest.Builder(LocalContext.current).data(data = recipe.image)
                                 .apply(block = fun ImageRequest.Builder.() {
                                     crossfade(true)
-                                    error(R.drawable.breakfast)
+                                    error(R.drawable.dinnerillu)
                                 }).build()
                         ),
                         contentDescription = "Recipe Image",

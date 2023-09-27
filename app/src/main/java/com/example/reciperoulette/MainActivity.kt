@@ -29,9 +29,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val recipeViewModel =
-                        ViewModelProvider(this, SharedViewModelFactory(applicationContext)).get(
-                            RecipeViewModel::class.java
-                        )
+                        ViewModelProvider(this, SharedViewModelFactory(applicationContext))[RecipeViewModel::class.java]
 
                     //val recipeViewModel: RecipeViewModel by viewModels()
                     val navController = rememberNavController()
