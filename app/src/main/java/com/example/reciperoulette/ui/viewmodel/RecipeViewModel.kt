@@ -13,6 +13,7 @@ import com.example.reciperoulette.data.model.adapter.getAPIRecipe
 import com.example.reciperoulette.data.model.dataClass.Recipe
 import com.example.reciperoulette.data.model.dataClass.SearchCriteria
 import com.example.reciperoulette.data.util.FilterItem
+import com.example.reciperoulette.data.util.filterdata
 import com.example.reciperoulette.data.util.getProperty
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -43,7 +44,8 @@ class RecipeViewModel(context: Context) : ViewModel() {
    //     return contextRef.get()
    // }
 
-    val vegetarianSwitch = mutableStateOf(false)
+    val filterData = MutableLiveData(filterdata())
+
 
     private val _recipe = MutableLiveData<Recipe?>()
     val recipe: LiveData<Recipe?> get() = _recipe   // Local version of the recipe from the API call
@@ -62,6 +64,7 @@ class RecipeViewModel(context: Context) : ViewModel() {
             maxReadyTime = null
         )
     }
+
 
 
     fun fetchRecipe(mealType: String) {
@@ -102,9 +105,18 @@ class RecipeViewModel(context: Context) : ViewModel() {
                 }
             }
         }
-
     }
 
+    // Function to reset all filters and update the UI
+    fun resetFilters() {
+        val originalFilterData = filterData.value
+        originalFilterData?.cuisines?.forEach { it.isSelected = false }
+        originalFilterData?.intolerances?.forEach { it.isSelected = false }
+        originalFilterData?.diets?.forEach { it.isSelected = false }
+
+        // Notify the UI of the updated filter data
+        filterData.value = originalFilterData
+    }
 
     fun applyFilters(selectedCuisines: List<FilterItem>, selectedIntolerances: List<FilterItem>, selectedDiets: List<FilterItem>) {
         Log.d("ViewModel", selectedCuisines.toString())

@@ -2,6 +2,7 @@ package com.example.reciperoulette.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -9,6 +10,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
 import com.example.reciperoulette.R
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val PoppinsFontFamily = FontFamily(
     Font(R.font.poppins_black, FontWeight.Black),
@@ -78,7 +81,6 @@ fun RecipeRouletteTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicLightColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> LightColorScheme
         else -> LightColorScheme
     }
@@ -86,8 +88,12 @@ fun RecipeRouletteTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            val statusBarColor = LightColorScheme.background
+            window.statusBarColor = statusBarColor.toArgb()
+
+            // Determine the appropriate system icon color based on the status bar color
+            val isLightStatusBar = isColorLight(statusBarColor)
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = isLightStatusBar
         }
     }
 
@@ -96,4 +102,10 @@ fun RecipeRouletteTheme(
         typography = Typography,
         content = content
     )
+}
+// Function to determine whether a color is light or dark
+fun isColorLight(color: Color): Boolean {
+    // Calculate the perceived brightness of the color
+    val brightness = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue)
+    return brightness > 0.5 // You can adjust the threshold as needed
 }

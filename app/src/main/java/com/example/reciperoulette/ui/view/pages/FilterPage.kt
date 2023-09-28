@@ -1,358 +1,386 @@
 package com.example.reciperoulette.ui.view.pages
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.reciperoulette.data.util.FilterItem
 import com.example.reciperoulette.data.util.NavigationRoute
+import com.example.reciperoulette.data.util.filterdata
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
+import kotlinx.coroutines.launch
+import kotlin.math.ceil
+
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalFoundationApi
+@Composable
+fun FilterPageTwo(navController: NavController, viewModel: RecipeViewModel) {
+    // Retrieve the filter data
+    val filterData = viewModel.filterData.observeAsState()
+
+    Scaffold(
+        bottomBar = {
+            // BottomBar content
+            Button(
+                onClick = {
+                    filterData.value?.let { viewModel.applyFilters(
+                        filterData.value!!.selectedCuisines,
+                        filterData.value!!.selectedIntolerances,
+                        filterData.value!!.selectedDiets
+                    ) }
+                    navController.navigate(NavigationRoute.Homepage.route)
+
+                    val selectedCuisines = filterData.value?.selectedCuisines?.map { it.name }
+                    val selectedIntolerances = filterData.value?.selectedIntolerances?.map { it.name }
+                    val selectedDiets = filterData.value?.selectedDiets?.map { it.name }
+
+                    // Print the chosen filters to the console
+                    println("Selected Cuisines: $selectedCuisines")
+                    println("Selected Intolerances: $selectedIntolerances")
+                    println("Selected Diets: $selectedDiets")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "Apply Filters")
+            }
+        },
+        content = {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(16.dp, 0.dp, 16.dp, 0.dp)
+            ) {
+                item {
+                    Row (Modifier.fillMaxWidth().padding(top = 5.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,){
+                        Text(
+                            text = "Filters",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 10.dp)
+                        )
+                        Text(
+                            text = "Reset Filters",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 5.dp)
+                                .clickable {
+                                    viewModel.resetFilters() // Call the resetFilters function
+                                    navController.navigate(NavigationRoute.FilterPage.route)
+                                }
+                        )
+                    }
+                }
+                item {
+                    Text(text = "Cuisines", style = MaterialTheme.typography.titleSmall)
+                    Box(modifier = Modifier.height(250.dp)) {
+                        filterData.value?.let { ScrollableGrid(it.cuisines) }
+                    }
+                }
+                item {
+                    Text(text = "Diets", style = MaterialTheme.typography.titleSmall)
+                    Box(modifier = Modifier.height(300.dp)) {
+                        filterData.value?.let { CheckboxGrid(filterItems = it.diets, 3) }
+                    }
+                }
+                item {
+                    Text(text = "Intolerances", style = MaterialTheme.typography.titleSmall)
+                    Box(modifier = Modifier.height(300.dp)) {
+                        filterData.value?.let { CheckboxGrid(filterItems = it.intolerances, 3) }
+                    }
+                }
+                item {
+                    //SubList2()
+                }
+            }
+        }
+    )
+}
+
+
+@Composable
+fun CircularCheckbox(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .background(if (checked) MaterialTheme.colorScheme.primary else Color.White)
+            .border(
+                width = 2.dp,
+                color = if (checked) MaterialTheme.colorScheme.primary else Color.Gray,
+                shape = CircleShape
+            )
+            .clickable { onCheckedChange(!checked) },
+        contentAlignment = Alignment.Center,
+    ) {
+        if (checked) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = Color.White,
+            )
+        }
+    }
+}
+
 /*
 @Composable
-fun FilterPage(navController: NavController, viewModel: RecipeViewModel){
-    LaunchedEffect(Unit) {
-        println("FilterPage recomposed!")
-    }
-    val selectedCuisine by viewModel.selectedCuisine.observeAsState(initial = null)
-    val selectedDiet by viewModel.selectedDiet.observeAsState(initial = null)
-    val selectedIntolerance by viewModel.selectedDiet.observeAsState(initial = null)
-    val selectedType by viewModel.selectedDiet.observeAsState(initial = null)
-    val maxReadyTime by viewModel.selectedDiet.observeAsState(initial = null)
-    val selectedCuisines = remember { mutableStateOf<Set<String>>(setOf()) }
-    val currentSelectedCuisines = rememberUpdatedState(selectedCuisines.value)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        CuisineCheckboxes(selectedCuisines) { cuisine ->
-            if (currentSelectedCuisines.value.contains(cuisine)) {
-                selectedCuisines.value = selectedCuisines.value - cuisine
-            } else {
-                selectedCuisines.value = selectedCuisines.value + cuisine
-            }
-        }
-
-
-       // CuisineGrid(selectedCuisines) { cuisine ->
-       //     // Handle cuisine selection
-       //     if (selectedCuisines.value.contains(cuisine)) {
-       //         viewModel.selectedCuisine.value = "" // Reset or handle deselection
-       //     } else {
-       //         viewModel.selectedCuisine.value = cuisine
-       //     }
-       // }
-        CuisineDropdown(viewModel.selectedCuisine) { cuisine ->
-            // Handle cuisine selection
-            viewModel.selectedCuisine.value = cuisine
-        }
-
-        DietRadioButton(viewModel.selectedDiet) { diet ->
-            // Handle diet selection
-            viewModel.selectedDiet.value = diet
-        }
-
-        // Add similar components for other filters
-
-        Button(onClick = {
-            //viewModel.applyFilters()
-            navController.navigate(NavigationRoute.Homepage.route)
-        }) {
-            Text("Apply Filters")
-        }
-    }
-}
-
-
-
-@Composable
-fun CuisineCheckboxes(selectedCuisines: MutableState<Set<String>>, onCuisineSelected: (String) -> Unit) {
-    val cuisines = listOf(
-        "African",
-        "Asian",
-        "American",
-        "British",
-        "Cajun",
-        "Caribbean",
-        "Chinese",
-        "Eastern European",
-        "European",
-        "French",
-        "German",
-        "Greek",
-        "Indian",
-        "Irish",
-        "Italian",
-        "Japanese",
-        "Jewish",
-        "Korean",
-        "Latin American",
-        "Mediterranean",
-        "Mexican",
-        "Middle Eastern",
-        "Nordic",
-        "Southern",
-        "Spanish",
-        "Thai",
-        "Vietnamese"
-    )
-
+fun CheckboxScrollRow(cuisines: List<FilterItem>) {
+    val state = rememberLazyGridState()
+    val coroutineScope = rememberCoroutineScope()
     Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+
+
+        LazyHorizontalGrid(
+            state = state,
+            rows = GridCells.Fixed(3),
+            modifier = Modifier
+                .fillMaxWidth()
+            //.background(Color.LightGray)
         ) {
-            // First column
-            Column(modifier = Modifier.weight(1f)) {
-                cuisines.subList(0, cuisines.size / 2).forEach { cuisine ->
-                    CheckboxOption(cuisine, selectedCuisines, onCuisineSelected)
-                }
-            }
+            items(cuisines) { cuisine ->
+                var isSelected by remember { mutableStateOf(cuisine.isSelected) }
 
-            // Spacer for some separation
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Second column
-            Column(modifier = Modifier.weight(1f)) {
-                cuisines.subList(cuisines.size / 2, cuisines.size).forEach { cuisine ->
-                    CheckboxOption(cuisine, selectedCuisines, onCuisineSelected)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CheckboxOption(cuisine: String, selectedCuisines: MutableState<Set<String>>, onCuisineSelected: (String) -> Unit) {
-    val isChecked = selectedCuisines.value.contains(cuisine)
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable {
-                onCuisineSelected(cuisine)
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = null // We handle the change in the Row's clickable modifier
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = cuisine, style = MaterialTheme.typography.bodySmall)
-    }
-}
-
-
-
-
-
-
-@Composable
-fun CuisineGrid(selectedCuisines: MutableState<List<String>>, onCuisineSelected: (String) -> Unit) {
-    val cuisines = listOf(
-        "African",
-        "Asian",
-        "American",
-        "British",
-        "Cajun",
-        "Caribbean",
-        "Chinese",
-        "Eastern European",
-        "European",
-        "French",
-        "German",
-        "Greek",
-        "Indian",
-        "Irish",
-        "Italian",
-        "Japanese",
-        "Jewish",
-        "Korean",
-        "Latin American",
-        "Mediterranean",
-        "Mexican",
-        "Middle Eastern",
-        "Nordic",
-        "Southern",
-        "Spanish",
-        "Thai",
-        "Vietnamese"
-    )
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(4), // 2 columns for example
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        items(cuisines) { cuisine ->
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .background(
-                        if (selectedCuisines.value.contains(cuisine)) Color.Blue else Color.Gray,
-                        shape = RoundedCornerShape(8.dp)
+                Row(
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .fillMaxHeight()
+                        .width(120.dp)
+                ) {
+                    CircularCheckbox(
+                        checked = isSelected,
+                        onCheckedChange = { isChecked ->
+                            isSelected = isChecked // Update the state
+                            cuisine.isSelected =
+                                isChecked // Update the original Cuisine object's state
+                        }
                     )
-                    .clickable {
-                        if (selectedCuisines.value.contains(cuisine)) {
-                            selectedCuisines.value = selectedCuisines.value - cuisine
-                        } else {
-                            selectedCuisines.value = selectedCuisines.value + cuisine
-                        }
-                        onCuisineSelected(cuisine)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = cuisine,
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
-        }
-    }
-}
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CuisineDropdown(selectedCuisine: MutableLiveData<String>, onCuisineSelected: (String) -> Unit) {
-    val context = LocalContext.current
-    val cuisines = listOf(
-        "African",
-        "Asian",
-        "American",
-        "British",
-        "Cajun",
-        "Caribbean",
-        "Chinese",
-        "Eastern European",
-        "European",
-        "French",
-        "German",
-        "Greek",
-        "Indian",
-        "Irish",
-        "Italian",
-        "Japanese",
-        "Jewish",
-        "Korean",
-        "Latin American",
-        "Mediterranean",
-        "Mexican",
-        "Middle Eastern",
-        "Nordic",
-        "Southern",
-        "Spanish",
-        "Thai",
-        "Vietnamese"
-    )
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                value = selectedCuisine.value ?: "Select Cuisine",
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                cuisines.forEach { cuisine ->
-                    DropdownMenuItem(
-                        text = { Text(text = cuisine) },
-                        onClick = {
-                            selectedCuisine.value = cuisine
-                            onCuisineSelected(cuisine)
-                            expanded = false
-                        }
+                    Text(
+                        text = cuisine.name,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
             }
+
         }
-    }
-}
 
-
-@Composable
-fun DietRadioButton(selectedDiet: MutableLiveData<String>, onDietSelected: (String) -> Unit) {
-    val diets = listOf("Vegetarian", "Vegan", "Paleo", "Keto") // Add more as needed
-
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        diets.forEach { diet ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = (diet == selectedDiet.value),
-                        onClick = {
-                            selectedDiet.value = diet
-                            onDietSelected(diet)
-                        }
-                    )
-                    .padding(8.dp)
-            ) {
-                RadioButton(
-                    selected = (diet == selectedDiet.value),
-                    onClick = {
-                        selectedDiet.value = diet
-                        onDietSelected(diet)
-                    }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = diet)
-            }
-        }
     }
 }*/
+
+
+
+@Composable
+fun CheckboxGrid(filterItems: List<FilterItem>, columns: Int = 3) {
+    val rows = ceil(filterItems.size / columns.toFloat()).toInt()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        repeat(rows) { rowIndex ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                for (columnIndex in 0 until columns) {
+                    val index = rowIndex * columns + columnIndex
+                    if (index < filterItems.size) {
+                        val filterItem = filterItems[index]
+                        var isSelected by remember { mutableStateOf(filterItem.isSelected) }
+
+                        // Use Modifier.weight to ensure equal sizes for Checkbox and Text
+                        Row(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp, bottom = 8.dp)
+                        ) {
+                            CircularCheckbox(
+                                checked = isSelected,
+                                onCheckedChange = { isChecked ->
+                                    isSelected = isChecked
+                                    filterItem.isSelected = isChecked
+                                }
+                            )
+                            Text(
+                                text = filterItem.name,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    } else {
+                        Spacer(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun LazyListScope.SubList2(){
+    items(0){
+        Text(text = "Hello World", Modifier.padding(16.dp))
+    }
+}
+
+
+
+@Composable
+fun ScrollableGrid(cuisines: List<FilterItem>) {
+    val itemsPerRow = 9
+    val rows = (cuisines.size + itemsPerRow - 1) / itemsPerRow // Calculate the number of rows needed
+    val state = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+
+    Column {
+
+        // Create a scrollable container
+        Box(
+            modifier = Modifier
+                .height(200.dp)
+                .horizontalScroll(state = state)
+        ) {
+            Column {
+                for (i in 0 until rows) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        for (j in i * itemsPerRow until minOf((i + 1) * itemsPerRow, cuisines.size)) {
+                            val cuisine = cuisines[j]
+                            var isSelected by remember { mutableStateOf(cuisine.isSelected) }
+
+                            Row(
+                                modifier = Modifier
+                                    .padding(end = 8.dp, top = 12.dp)
+                                    .width(120.dp)
+                                    .height(50.dp)
+                            ) {
+                                CircularCheckbox(
+                                    checked = isSelected,
+                                    onCheckedChange = { isChecked ->
+                                        isSelected = isChecked
+                                        cuisine.isSelected = isChecked
+                                    }
+                                )
+                                Text(
+                                    text = cuisine.name,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Navigation buttons
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .padding(end = 10.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                // IconButton to navigate to the start
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            state.animateScrollTo(0)
+                        }
+                    },
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Scroll to Start"
+                    )
+                }
+                // IconButton to navigate to the end
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            state.animateScrollTo(state.maxValue)
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = "Scroll to End"
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
