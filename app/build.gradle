@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.reciperoulette'
+    namespace 'com.mkolab.reciperoulette'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.reciperoulette"
+        applicationId "com.mkolab.reciperoulette"
         minSdk 28
         targetSdk 34
         versionCode 1
@@ -22,11 +22,19 @@ android {
             useSupportLibrary true
         }
     }
-
+    signingConfigs {
+        release {
+            storeFile file('RecipeRouletteKeyStore.keystore')
+            storePassword 'fv^*3&hDh2MudzH8^D4'
+            keyAlias 'releaseKey'
+            keyPassword 'fv^*3&hDh2MudzH8^D4'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
