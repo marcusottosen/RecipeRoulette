@@ -50,8 +50,10 @@ class RecipeViewModel(context: Context) : ViewModel() {
     private val _recipe = MutableLiveData<Recipe?>()
     val recipe: LiveData<Recipe?> get() = _recipe   // Local version of the recipe from the API call
 
-    private val _navigateToDetails = MutableLiveData<Boolean>()
-    val navigateToDetails: LiveData<Boolean> get() = _navigateToDetails
+    // 0 = not loaded/error, 1 = loading, 2 = loaded
+
+    private val _navigateToDetails = MutableLiveData<Int>()
+    val navigateToDetails: LiveData<Int> get() = _navigateToDetails
 
 
     private val _currentCriteria = MutableLiveData<SearchCriteria>()
@@ -91,8 +93,9 @@ class RecipeViewModel(context: Context) : ViewModel() {
                 Log.d("RecipeViewModel", "Recipe fetched: ${fetchedRecipe?.title}")
                 if (fetchedRecipe != null) {
                     isRetryAttempted = false
-                    _navigateToDetails.value = true
+                    _navigateToDetails.value = 2
                 } else {
+                    _navigateToDetails.value = 0
                     Toast.makeText(getContext(), "No recipe found. Try changing your filters", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
@@ -100,6 +103,7 @@ class RecipeViewModel(context: Context) : ViewModel() {
                     isRetryAttempted = true
                     fetchRecipe(mealType)
                 } else {
+                    _navigateToDetails.value = 0
                     Log.e("RecipeViewModel", "Error fetching recipe: ${e.message}")
                     Toast.makeText(getContext(), "Error fetching recipe", Toast.LENGTH_SHORT).show()
                 }
@@ -131,6 +135,6 @@ class RecipeViewModel(context: Context) : ViewModel() {
     }
 
     fun onNavigationDone() {
-        _navigateToDetails.value = false
+        _navigateToDetails.value = 1
     }
 }

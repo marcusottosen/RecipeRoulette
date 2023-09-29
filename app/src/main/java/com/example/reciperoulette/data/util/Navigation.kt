@@ -2,14 +2,20 @@ package com.example.reciperoulette.data.util
 
 
 import AnimatedView
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.reciperoulette.ui.view.pages.FilterPageTwo
+import com.example.reciperoulette.ui.view.pages.FilterPage
 import com.example.reciperoulette.ui.view.pages.Homepage
 import com.example.reciperoulette.ui.view.pages.RecipePage
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
@@ -41,13 +47,29 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
 
 
         composable(NavigationRoute.Loadingpage.route){
-            AnimatedView(navController)
+            AnimatedView(navController, recipeViewModel)
         }
 
-        composable(NavigationRoute.FilterPage.route){
-            //FilterPage(navController, recipeViewModel)
-            FilterPageTwo(navController, recipeViewModel)
-        }
+
+        composable(
+            route = NavigationRoute.FilterPage.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down,
+                    animationSpec = tween(700)
+                )
+            }
+        ) {
+                FilterPage(navController, recipeViewModel)
+            }
+
+
 
         // composable(NavigationRoute.Recipe.route) {
         //     RecipePage(navController, recipeViewModel)
@@ -71,7 +93,10 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
         }*/
 
     }
+
 }
+
+
 /*itemModel?.let {
     Log.e("Navigation", "Should load ItemInfoPage 3")
     ItemInfoPage(item = it, navController = navController)

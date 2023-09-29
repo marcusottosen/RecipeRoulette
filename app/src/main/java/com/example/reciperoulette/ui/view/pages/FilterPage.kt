@@ -21,16 +21,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -41,7 +34,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -53,31 +45,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.reciperoulette.data.util.FilterItem
 import com.example.reciperoulette.data.util.NavigationRoute
-import com.example.reciperoulette.data.util.filterdata
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalFoundationApi
 @Composable
-fun FilterPageTwo(navController: NavController, viewModel: RecipeViewModel) {
+fun FilterPage(navController: NavHostController, viewModel: RecipeViewModel) {
     // Retrieve the filter data
     val filterData = viewModel.filterData.observeAsState()
 
     Scaffold(
         bottomBar = {
-            // BottomBar content
             Button(
                 onClick = {
                     filterData.value?.let { viewModel.applyFilters(
@@ -87,14 +72,14 @@ fun FilterPageTwo(navController: NavController, viewModel: RecipeViewModel) {
                     ) }
                     navController.navigate(NavigationRoute.Homepage.route)
 
-                    val selectedCuisines = filterData.value?.selectedCuisines?.map { it.name }
-                    val selectedIntolerances = filterData.value?.selectedIntolerances?.map { it.name }
-                    val selectedDiets = filterData.value?.selectedDiets?.map { it.name }
+                    //val selectedCuisines = filterData.value?.selectedCuisines?.map { it.name }
+                    //val selectedIntolerances = filterData.value?.selectedIntolerances?.map { it.name }
+                    //val selectedDiets = filterData.value?.selectedDiets?.map { it.name }
 
-                    // Print the chosen filters to the console
-                    println("Selected Cuisines: $selectedCuisines")
-                    println("Selected Intolerances: $selectedIntolerances")
-                    println("Selected Diets: $selectedDiets")
+                    //// Print the chosen filters to the console
+                    //println("Selected Cuisines: $selectedCuisines")
+                    //println("Selected Intolerances: $selectedIntolerances")
+                    //println("Selected Diets: $selectedDiets")
                 },
                 modifier = Modifier
                     .fillMaxWidth()

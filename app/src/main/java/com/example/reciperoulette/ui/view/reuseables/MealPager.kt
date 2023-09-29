@@ -41,7 +41,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.navigation.NavController
 import com.example.reciperoulette.R
+import com.example.reciperoulette.data.util.NavigationRoute
 import com.example.reciperoulette.ui.view.pages.MealData
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 import kotlin.math.absoluteValue
@@ -49,7 +51,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MealPager(mealDataList: List<MealData>, viewModel: RecipeViewModel) {
+fun MealPager(mealDataList: List<MealData>, viewModel: RecipeViewModel, navController: NavController) {
 
     Box(
         modifier = Modifier
@@ -76,7 +78,8 @@ fun MealPager(mealDataList: List<MealData>, viewModel: RecipeViewModel) {
                     pagerState = pagerState,
                     page = page,
                     mealData = mealDataList[page],
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navController = navController
                 )
             }
         }
@@ -110,7 +113,8 @@ fun MealCard(
     page: Int,
     modifier: Modifier = Modifier,
     mealData: MealData,
-    viewModel: RecipeViewModel
+    viewModel: RecipeViewModel,
+    navController: NavController
 ) {
     val pageOffset = ((pagerState.currentPage - page) + pagerState
         .currentPageOffsetFraction).absoluteValue
@@ -119,6 +123,7 @@ fun MealCard(
             .fillMaxWidth()
             .clickable(onClick = {
                 viewModel.fetchRecipe(mealType = mealData.title)
+                navController.navigate(NavigationRoute.Loadingpage.route)
             })
             .wrapContentHeight()
             .shadow(16.dp, spotColor = mealData.shadowColor, shape = RoundedCornerShape(32.dp))

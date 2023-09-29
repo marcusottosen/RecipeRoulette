@@ -80,89 +80,9 @@ fun TextStat(num: String, type: String){
 fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {//navController: NavController, recipeViewModel: RecipeViewModel
     val recipe by recipeViewModel.recipe.observeAsState()
 
-// Navigate to various destinations
 
-// Print the back stack entries
-    val entries = navController.currentBackStack
     Log.d("RECIPE PAGE", "HERE")
-    for (i in 0..3){
-        Log.d("entry",entries.value[i].toString())
-    }
 
-
-    /*LaunchedEffect(recipe) {
-        // This block will execute whenever 'recipe' changes
-    }*/
-
-
-    // Sample data
-    /*val recipe = RecipeA(
-        title = "Chile Underground's Texas Caviar",
-        readyInMinutes = 180,
-        servings = 8,
-        sourceUrl = "http://www.foodista.com/recipe/KTCLZPKR/chile-undergrounds-texas-caviar",
-        image = "https://spoonacular.com/recipeImages/644681-556x370.jpg",
-        summary = "Chile Underground's Texas Caviar might be just the hor d'oeuvre you are searching for. For <b>\$1.4 per serving</b>, this recipe <b>covers 14%</b> of your daily requirements of vitamins and minerals. One portion of this dish contains around <b>9g of protein</b>, <b>8g of fat</b>, and a total of <b>225 calories</b>. This recipe serves 8. 4 people were glad they tried this recipe. It is a good option if you're following a <b>gluten free, dairy free, lacto ovo vegetarian, and vegan</b> diet. This recipe from Foodista requires super-sweet grape tomatoes, olive oil, bell pepper, and oregano. From preparation to the plate, this recipe takes roughly <b>3 hours</b>. Overall, this recipe earns a <b>spectacular spoonacular score of 80%</b>. If you like this recipe, take a look at these similar recipes: <a href=\"https://spoonacular.com/recipes/chili-lime-texas-caviar-cowboy-caviar-913007\">Chili Lime Texas Caviar (Cowboy Caviar)</a>, <a href=\"https://spoonacular.com/recipes/easy-texas-caviar-cowboy-caviar-1438805\">Easy Texas Caviar (Cowboy Caviar)</a>, and <a href=\"https://spoonacular.com/recipes/cowboy-caviar-texas-caviar-1495381\">Cowboy Caviar (Texas Caviar)</a>.\n",
-        extendedIngredients = listOf(
-            IngredientA(nameClean = "balsamic vinegar", amount = 1.0, unit = "ounce"),
-            IngredientA(nameClean = "canned black beans", amount = 15.0, unit = "oz"),
-            IngredientA(nameClean = "shredded coconut", amount = 1.0, unit = "cup"),
-            IngredientA(nameClean = "light corn syrup", amount = 15.0, unit = "cup"),
-            IngredientA(nameClean = "shredded coconut", amount = 1.0, unit = "cup"),
-            IngredientA(nameClean = "canned black beans", amount = 15.0, unit = "oz"),
-            IngredientA(nameClean = "balsamic vinegar", amount = 1.0, unit = "ounce"),
-            IngredientA(nameClean = "canned black beans", amount = 15.0, unit = "oz"),
-            IngredientA(nameClean = "balsamic vinegar", amount = 1.0, unit = "ounce"),
-            IngredientA(nameClean = "canned black beans", amount = 15.0, unit = "oz"),
-            // ... [Add all other ingredients here]
-        ),
-        analyzedInstructions = listOf(
-            Instruction(
-                steps = listOf(
-                    Step(
-                        number = 1,
-                        step = "Heat the oil in a large skillet over medium-high heat"
-                    ),
-                    Step(
-                        number = 2,
-                        step = "Add onion and cook for just a minute or two with stirring"
-                    ),
-                    Step(
-                        number = 3,
-                        step = "Heat the oil in a large skillet over medium-high heat"
-                    ),
-                    Step(
-                        number = 4,
-                        step = "Add onion and cook for just a minute or two with stirring"
-                    ),
-                    Step(
-                        number = 5,
-                        step = "Heat the oil in a large skillet over medium-high heat"
-                    ),
-                    Step(
-                        number = 6,
-                        step = "Add onion and cook for just a minute or two with stirring"
-                    ),
-                    Step(
-                        number = 7,
-                        step = "Heat the oil in a large skillet over medium-high heat"
-                    ),
-                    Step(
-                        number = 8,
-                        step = "Add onion and cook for just a minute or two with stirring"
-                    ),
-                    Step(
-                        number = 9,
-                        step = "Heat the oil in a large skillet over medium-high heat"
-                    ),
-                    Step(
-                        number = 10,
-                        step = "Add onion and cook for just a minute or two with stirring"
-                    ),
-                )
-            )
-        )
-    )*/
 
     var isImageExpanded by remember { mutableStateOf(false) }
 

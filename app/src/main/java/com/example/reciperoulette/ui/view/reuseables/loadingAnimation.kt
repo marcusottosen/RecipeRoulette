@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -27,28 +28,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.reciperoulette.R
 import com.example.reciperoulette.data.util.NavigationRoute
+import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
 import kotlinx.coroutines.delay
 
 
 
 @Composable
-fun AnimatedView(navController: NavController) {
+fun AnimatedView(navController: NavController, recipeViewModel: RecipeViewModel) {
+    val navigateToDetails by recipeViewModel.navigateToDetails.observeAsState(initial = false)
+
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.loading_plate)
     )
-
-    val speed = 2f
+    val speed = 1.5f
 
     // Text visibility states
     var isFindingRecipe by remember { mutableStateOf(true) }
 
-    var updateString by remember {
+    val updateString by remember {
         mutableStateOf("Finding the best random recipe for you")
     }
 
@@ -68,22 +72,39 @@ fun AnimatedView(navController: NavController) {
             )
             if (isFindingRecipe) {
                 Text(
-                    text = updateString,
+                    text = "",
                     style = TextStyle(
                         color = Color.Black, // Customize the text color
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
-                // Display dots with delays
-
             }
         }
     }
 
+    if (navigateToDetails == 2) {
+        //isFindingRecipe = false
+
+        LaunchedEffect(key1 = composition) {
+            delay(1000)
+            recipeViewModel.onNavigationDone()
+            navController.navigate(NavigationRoute.Recipe.route)
+        }
+    }
+
+    if (navigateToDetails == 0) { // if error nav back to homepage
+        //isFindingRecipe = false
+        LaunchedEffect(key1 = composition) {
+            delay(1000)
+            navController.navigate(NavigationRoute.Homepage.route)
+        }
+    }
+}
+
     // Use LaunchedEffect with delays to control the text animation
-    LaunchedEffect(key1 = composition) {
-        delay(1500) //500 for all
+    //LaunchedEffect(key1 = composition) {
+        //delay(1500) //500 for all
         //updateString = "Finding the best random recipe for you"
 
         //delay(300)
@@ -93,15 +114,14 @@ fun AnimatedView(navController: NavController) {
         //updateString = "Finding the best random recipe for you..."
 //
         //delay(300)
-        isFindingRecipe = false
-        navController.navigate(NavigationRoute.Recipe.route)
+        //navController.navigate(NavigationRoute.Recipe.route)
        // {
        //     popUpTo(NavigationRoute.Homepage.route) {
        //         inclusive = false
        //     }
        // }
 
-    }
+    //}
     //if (progress == 1.0f) {
     //    // Animation completes.
     //    navController.navigate(NavigationRoute.Recipe.route)
@@ -124,4 +144,4 @@ fun AnimatedView(navController: NavController) {
             composition = composition
         )
     }*/
-}
+
