@@ -80,7 +80,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-compose:2.7.3'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation("com.airbnb.android:lottie-compose:6.0.1")
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.squareup.moshi:moshi:1.14.0'
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
@@ -89,6 +89,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
     implementation "com.google.accompanist:accompanist-pager:0.17.0"
     implementation "com.google.accompanist:accompanist-flowlayout:0.20.0"
+
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
 
