@@ -1,7 +1,9 @@
 package com.example.reciperoulette.ui.view.pages
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,11 +46,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.reciperoulette.R
 import com.example.reciperoulette.data.util.NavigationRoute
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
+import kotlinx.coroutines.flow.forEach
 
 
 @Composable
@@ -71,9 +75,20 @@ fun TextStat(num: String, type: String){
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecipePage(navController: NavController, recipeViewModel: RecipeViewModel) {//navController: NavController, recipeViewModel: RecipeViewModel
     val recipe by recipeViewModel.recipe.observeAsState()
+
+// Navigate to various destinations
+
+// Print the back stack entries
+    val entries = navController.currentBackStack
+    Log.d("RECIPE PAGE", "HERE")
+    for (i in 0..3){
+        Log.d("entry",entries.value[i].toString())
+    }
+
 
     /*LaunchedEffect(recipe) {
         // This block will execute whenever 'recipe' changes

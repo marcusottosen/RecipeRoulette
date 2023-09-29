@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
 import com.example.reciperoulette.R
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val PoppinsFontFamily = FontFamily(
     Font(R.font.poppins_black, FontWeight.Black),

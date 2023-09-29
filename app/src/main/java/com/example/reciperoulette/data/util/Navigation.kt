@@ -2,6 +2,8 @@ package com.example.reciperoulette.data.util
 
 
 import AnimatedView
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -11,7 +13,6 @@ import com.example.reciperoulette.ui.view.pages.FilterPageTwo
 import com.example.reciperoulette.ui.view.pages.Homepage
 import com.example.reciperoulette.ui.view.pages.RecipePage
 import com.example.reciperoulette.ui.viewmodel.RecipeViewModel
-import com.example.reciperoulette.ui.view.reuseables.MealPager
 
 @ExperimentalFoundationApi
 @Composable
@@ -28,9 +29,16 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
             Homepage(navController, recipeViewModel)
         }
 
+        // When navigating from B to C
         composable(NavigationRoute.Recipe.route) {
-            RecipePage(navController, recipeViewModel)//navController = navController, recipeViewModel
+            RecipePage(navController, recipeViewModel)
+
+            // Handle the back button press in RecipePage
+            BackHandler {
+                navController.navigate(NavigationRoute.Homepage.route)
+            }
         }
+
 
         composable(NavigationRoute.Loadingpage.route){
             AnimatedView(navController)
@@ -40,6 +48,10 @@ fun Navigation(navController: NavHostController, recipeViewModel: RecipeViewMode
             //FilterPage(navController, recipeViewModel)
             FilterPageTwo(navController, recipeViewModel)
         }
+
+        // composable(NavigationRoute.Recipe.route) {
+        //     RecipePage(navController, recipeViewModel)
+        // }
 
 
         /*

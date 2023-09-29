@@ -1,5 +1,6 @@
 package com.example.reciperoulette.ui.view.pages
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ data class MealData(
 
 @Composable
 fun Homepage(navController: NavController, recipeViewModel: RecipeViewModel) {
+    Log.d("HOMEPAGE", "navigated to homepage")
 
     val navigateToDetails by recipeViewModel.navigateToDetails.observeAsState(initial = false)
     if (navigateToDetails) {

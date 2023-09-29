@@ -54,7 +54,8 @@ fun AnimatedView(navController: NavController) {
             LottieAnimation(
                 composition,
                 modifier = Modifier.size(300.dp).padding(bottom = 20.dp),
-                speed = speed
+                speed = speed,
+                iterations = 999
             )
             if (isFindingRecipe) {
                 Text(
@@ -84,7 +85,13 @@ fun AnimatedView(navController: NavController) {
 
         delay(500)
         isFindingRecipe = false
-        navController.navigate(NavigationRoute.Recipe.route)
+        //navController.navigate(NavigationRoute.Recipe.route)
+       // {
+       //     popUpTo(NavigationRoute.Homepage.route) {
+       //         inclusive = false
+       //     }
+       // }
+
     }
     //if (progress == 1.0f) {
     //    // Animation completes.
